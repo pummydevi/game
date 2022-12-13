@@ -1,144 +1,107 @@
-var path,boy,cash,diamonds,jwellery,sword;
-var pathImg,boyImg,cashImg,diamondsImg,jwelleryImg,swordImg;
-var treasureCollection = 0;
-var cashG,diamondsG,jwelleryG,swordGroup;
+  
+var towerImg, tower;
+var doorImg, door, doorsGroup;
+var climberImg, climber, climbersGroup;
+var ghost, ghostImg;
+var invisibleBlockGroup, invisibleBlock;
+var gameState = "play"
 
-//Game States
-var PLAY=1;
-var END=0;
-var gameState=1;
 
 function preload(){
-  pathImg = loadImage("Road.png");
-  boyImg = loadAnimation("Runner-1.png","Runner-2.png");
-  cashImg = loadImage("cash.png");
-  diamondsImg = loadImage("diamonds.png");
-  jwelleryImg = loadImage("jwell.png");
-  swordImg = loadImage("sword.png");
-  endImg =loadImage("gameOver.png");
+  towerImg = loadImage("tower.png");
+  doorImg = loadImage("door.png");
+  climberImg = loadImage("climber.png");
+  ghostImg = loadImage("ghost-standing.png");
+  spookySound = loadSound("spooky.wav");
 }
 
-function setup(){
+function setup() {
+  createCanvas(600,600);
+  spookySound.loop();
+  tower = createSprite(300,300);
+  tower.addImage("tower",towerImg);
+  tower.velocityY = 1;
   
-  createCanvas(windowWidth,windowHeight);
-// Moving background
-path=createSprite(width/2,200);
-path.addImage(pathImg);
-path.velocityY = 4;
-
-//creating boy running
-boy = createSprite(windowWidth,windowHeight,20,20);
-boy.addAnimation("sahil",boyImg);
-boy.scale=0.08;
-
-end = createSprite(width/2,height/2,0,70);
-end.addImage(endImg);
-end.visible = false;
+  doorsGroup = new Group();
+  climbersGroup = new Group();
+  invisibleBlockGroup = new Group();
   
-cashG=new Group();
-diamondsG=new Group();
-jwelleryG=new Group();
-swordGroup=new Group();
-
+  ghost = createSprite(200,200,50,50);
+  ghost.scale = 0.3;
+  ghost.addImage("ghost", ghostImg);
 }
+
 
 function draw() {
-
-  if(gameState===PLAY){
-  background(0);
-  boy.x = World.mouseX;
+  background(255);
   
-  edges= createEdgeSprites();
-  boy.collide(edges);
+  if (gameState === "play") {
+    
+    if(keyDown("")){
   
-  //code to reset the background
-  if(path.y > height ){
-    path.y = height/2;
-  }
+      // write a code to move left when left arrow is pressed
+    }
+    if(keyDown("")){
   
-    createCash();
-    createDiamonds();
-    createJwellery();
-    createSword();
-     
-        if (boy.isTouching(cashG)) {
-          cashG.destroyEach();
-          treasureCollection=treasureCollection+50;
-        }
-        else if (boy.isTouching(diamondsG)) {
-          diamondsG.destroyEach();
-          treasureCollection=treasureCollection+100;
-        }
-        else if(boy.isTouching(jwelleryG)) {
-          jwelleryG.destroyEach();
-          treasureCollection= treasureCollection + 150;
-        }
-        
-        else if(boy.isTouching(swordGroup)) {
+    
+      // write a code to move left when right arrow is pressed
+      
+    }
+    if(keyDown("")){
+  
+   
+      // write a code to move up when space arrow is pressed
+      
+    }
+  
+  ghost.velocityY = ghost.velocityY + 0.8;
+  
+   
+      //write a condition for infinte scrolling tower
+    
+      spawnDoors();
 
-        end.visible = true;
-
-          cashG.destroyEach();
-        diamondsG.destroyEach();
-        jwelleryG.destroyEach();
-        swordGroup.destroyEach();
-        
-        cashG.setVelocityYEach(0);
-        diamondsG.setVelocityYEach(0);
-        jwelleryG.setVelocityYEach(0);
-        swordGroup.setVelocityYEach(0);
-
-        
-            gameState==END;
-  }}
+  
+      //write a code to make climbersGroup collide with ghost change the ghost velocity  
+//write a code to make invisibleBlockGroup collide with ghost destroy the ghost and make gamestate to end.
   
   drawSprites();
-  textSize(20);
-  fill(255);
-  text("Treasure: "+ treasureCollection,width/10,height/20);
-  }
-
-
-
-function createCash() {
-  if (World.frameCount % 200 == 0) {
-  var cash = createSprite(Math.round(random(50, width-50),40, 10, 10));
-  cash.addImage(cashImg);
-  cash.scale=0.12;
-  cash.velocityY = 3;
-  cash.lifetime = 150;
-  cashG.add(cash);
+}
+  if (gameState === "end"){
+    stroke("yellow");
+    fill("yellow");
+    textSize(30);
+    text("Game Over", 230,250)
   }
 }
 
-function createDiamonds() {
-  if (World.frameCount % 320 == 0) {
-  var diamonds = createSprite(Math.round(random(50, width-50),40, 10, 10));
-  diamonds.addImage(diamondsImg);
-  diamonds.scale=0.03;
-  diamonds.velocityY = 3;
-  diamonds.lifetime = 150;
-  diamondsG.add(diamonds);
-}
-}
+function spawnDoors()
+ {
+  //write code here to spawn the clouds
+  if (frameCount % 240 === 0) {
+    var door = createSprite(200, -50);
+    var climber = createSprite(200,10);
+    var invisibleBlock = createSprite(200,15);
+    invisibleBlock.width = climber.width;
+    invisibleBlock.height = 2;
+    //add the random function
+    //
+    door.addImage(doorImg);
+    climber.addImage(climberImg);
+    
+    door.velocityY = 1;
+    climber.velocityY = 1;
+    invisibleBlock.velocityY = 1;
 
-function createJwellery() {
-  if (World.frameCount % 410 == 0) {
-  var jwellery = createSprite(Math.round(random(50, width-50),40, 10, 10));
-  jwellery.addImage(jwelleryImg);
-  jwellery.scale=0.13;
-  jwellery.velocityY = 3;
-  jwellery.lifetime = 150;
-  jwelleryG.add(jwellery);
+    //change the depth of the ghost and door
+    
+     
+
+    
+    //assign lifetime to the obstacle.lifetime = 300; here  obstacle are door, climber and invisible block
+
+
+    //add each obstacle to the group obstaclesGroup.add(obstacle);here  obstacle are door, climber and invisible block
   }
 }
 
-function createSword(){
-  if (World.frameCount % 530 == 0) {
-  var sword = createSprite(Math.round(random(50, 350),40, 10, 10));
-  sword.addImage(swordImg);
-  sword.scale=0.1;
-  sword.velocityY = 3;
-  sword.lifetime = 150;
-  swordGroup.add(sword);
-  }}
