@@ -1,107 +1,61 @@
-  
-var towerImg, tower;
-var doorImg, door, doorsGroup;
-var climberImg, climber, climbersGroup;
-var ghost, ghostImg;
-var invisibleBlockGroup, invisibleBlock;
-var gameState = "play"
+
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
 
 
-function preload(){
-  towerImg = loadImage("tower.png");
-  doorImg = loadImage("door.png");
-  climberImg = loadImage("climber.png");
-  ghostImg = loadImage("ghost-standing.png");
-  spookySound = loadSound("spooky.wav");
-}
+var world,engine;
+var ball;
 
 function setup() {
-  createCanvas(600,600);
-  spookySound.loop();
-  tower = createSprite(300,300);
-  tower.addImage("tower",towerImg);
-  tower.velocityY = 1;
-  
-  doorsGroup = new Group();
-  climbersGroup = new Group();
-  invisibleBlockGroup = new Group();
-  
-  ghost = createSprite(200,200,50,50);
-  ghost.scale = 0.3;
-  ghost.addImage("ghost", ghostImg);
-}
+  createCanvas(400,400);
 
-
-function draw() {
-  background(255);
+  engine = Engine.create();
+  world = engine.world;
   
-  if (gameState === "play") {
-    
-    if(keyDown("")){
-  
-      // write a code to move left when left arrow is pressed
-    }
-    if(keyDown("")){
-  
-    
-      // write a code to move left when right arrow is pressed
-      
-    }
-    if(keyDown("")){
-  
-   
-      // write a code to move up when space arrow is pressed
-      
-    }
-  
-  ghost.velocityY = ghost.velocityY + 0.8;
-  
-   
-      //write a condition for infinte scrolling tower
-    
-      spawnDoors();
-
-  
-      //write a code to make climbersGroup collide with ghost change the ghost velocity  
-//write a code to make invisibleBlockGroup collide with ghost destroy the ghost and make gamestate to end.
-  
-  drawSprites();
-}
-  if (gameState === "end"){
-    stroke("yellow");
-    fill("yellow");
-    textSize(30);
-    text("Game Over", 230,250)
+   var ball_options = {
+    restitution: 0.95,
+    frictionAir:0.01
   }
+   
+   var ground_options ={
+     isStatic: true
+   };
+  
+  
+//create a ground
+ground = Bodies.rectangle(10,400,1000,50,ground_options);
+//add to world
+World.add(world,ground);
+
+  ball = Bodies.circle(100,10,20,ball_options);
+  World.add(world,ball);
+  
+  
+  
+
+  rectMode(CENTER);
+  ellipseMode(RADIUS);
 }
 
-function spawnDoors()
- {
-  //write code here to spawn the clouds
-  if (frameCount % 240 === 0) {
-    var door = createSprite(200, -50);
-    var climber = createSprite(200,10);
-    var invisibleBlock = createSprite(200,15);
-    invisibleBlock.width = climber.width;
-    invisibleBlock.height = 2;
-    //add the random function
-    //
-    door.addImage(doorImg);
-    climber.addImage(climberImg);
-    
-    door.velocityY = 1;
-    climber.velocityY = 1;
-    invisibleBlock.velocityY = 1;
 
-    //change the depth of the ghost and door
-    
-     
+function draw() 
+{
+  background(51);
+  Engine.update(engine);
+  fill("yellow")
+  
+  
+  
 
-    
-    //assign lifetime to the obstacle.lifetime = 300; here  obstacle are door, climber and invisible block
+  ellipse(ball.position.x,ball.position.y,20);
+  //write a rectangle function to display ground.
+  rect(ground.position.x,ground.position.y,1000,40);
+  
 
 
-    //add each obstacle to the group obstaclesGroup.add(obstacle);here  obstacle are door, climber and invisible block
-  }
+  
+  
 }
 
