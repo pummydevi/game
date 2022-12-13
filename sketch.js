@@ -1,51 +1,61 @@
-var canvas;
-var backgroundImage, car1_img, car2_img, track;
-var fuelImage, powerCoinImage, lifeImage;
-var obstacle1Image, obstacle2Image;                        //C41// SA
-var database, gameState;
-var form, player, playerCount;
-var allPlayers, car1, car2, fuels, powerCoins, obstacle1,obstacle2; // C41//SA
-var cars = [];
-var blastImage;                   //C42// SA
 
-function preload() {
-  backgroundImage = loadImage("./assets/background.png");
-  car1_img = loadImage("../assets/car1.png");
-  car2_img = loadImage("../assets/car2.png");
-  track = loadImage("../assets/track.jpg");
-  fuelImage = loadImage("./assets/fuel.png");
-  powerCoinImage = loadImage("./assets/goldCoin.png");
-  lifeImage = loadImage("./assets/life.png");
-  obstacle1Image = loadImage("./assets/obstacle1.png"); // C41//SA
-  obstacle2Image = loadImage("./assets/obstacle2.png"); // C41//SA
-  blastImage = loadImage("./assets/blast.png"); //C42 //SA
- 
-}
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+
+
+var world,engine;
+var ball;
 
 function setup() {
-  canvas = createCanvas(windowWidth, windowHeight);
-  database = firebase.database();
-  game = new Game();
-  game.getState();
-  game.start();
+  createCanvas(400,400);
+
+  engine = Engine.create();
+  world = engine.world;
+  
+   var ball_options = {
+    restitution: 0.95,
+    frictionAir:0.01
+  }
+   
+   var ground_options ={
+     isStatic: true
+   };
+  
+  
+//create a ground
+ground = Bodies.rectangle(10,400,1000,50,ground_options);
+//add to world
+World.add(world,ground);
+
+  ball = Bodies.circle(100,10,20,ball_options);
+  World.add(world,ball);
+  
+  
+  
+
+  rectMode(CENTER);
+  ellipseMode(RADIUS);
 }
 
-function draw() {
-  background(backgroundImage);
-  if (playerCount === 2) {
-    game.update(1);
-  }
 
-  if (gameState === 1) {
-    game.play();
-  }
+function draw() 
+{
+  background(51);
+  Engine.update(engine);
+  fill("yellow")
+  
+  
+  
 
-  if (gameState === 2) {
-    game.showLeaderboard();
-    game.end();
-  }
+  ellipse(ball.position.x,ball.position.y,20);
+  //write a rectangle function to display ground.
+  rect(ground.position.x,ground.position.y,1000,40);
+  
+
+
+  
+  
 }
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}
