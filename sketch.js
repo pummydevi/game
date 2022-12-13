@@ -4,34 +4,45 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 
+let engine;
+let world;
 
-var world,engine;
+var ground;
+
+var top_wall;
 var ball;
+
+var btn1;
+var btn2;
 
 function setup() {
   createCanvas(400,400);
 
   engine = Engine.create();
   world = engine.world;
-  
-   var ball_options = {
-    restitution: 0.95,
-    frictionAir:0.01
+ 
+  var ball_options={
+    restitution:0.95,
   }
-   
-   var ground_options ={
-     isStatic: true
-   };
-  
-  
-//create a ground
-ground = Bodies.rectangle(10,400,1000,50,ground_options);
-//add to world
-World.add(world,ground);
 
-  ball = Bodies.circle(100,10,20,ball_options);
+  ground =new Ground(200,390,400,20);
+ 
+ top_wall = new Ground(50,200,30,20);
+  top_wall1 = new Ground(150,200,30,20);
+  top_wall2 = new Ground(250,200,30,20);
+  top_wall3 = new Ground(350,200,30,20);
+
+  btn2=createImg('up.png');
+  btn2.position(20,30);
+  btn2.size(50,50);
+  btn2.mouseClicked(vForce);
+
+
+
+
+
+  ball=Bodies.circle(100,200,20,ball_options);
   World.add(world,ball);
-  
   
   
 
@@ -43,19 +54,21 @@ World.add(world,ground);
 function draw() 
 {
   background(51);
-  Engine.update(engine);
   fill("yellow")
   
-  
-  
 
+  ground.show();
+  top_wall.show();
+  top_wall1.show();
+  top_wall2.show();
+  top_wall3.show();
+  Engine.update(engine);
   ellipse(ball.position.x,ball.position.y,20);
-  //write a rectangle function to display ground.
-  rect(ground.position.x,ground.position.y,1000,40);
-  
+}
 
+function vForce(){
 
-  
-  
+Matter.Body.applyForce(ball,{x:0,y:0},{x:0,y:-0.05});
+Pop();
 }
 
