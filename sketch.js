@@ -1,76 +1,144 @@
-var trex, trex_running, trex_collided;
-var ground, invisibleGround, groundImage;
+var path,boy,cash,diamonds,jwellery,sword;
+var pathImg,boyImg,cashImg,diamondsImg,jwelleryImg,swordImg;
+var treasureCollection = 0;
+var cashG,diamondsG,jwelleryG,swordGroup;
 
-var cloud, cloudsGroup, cloudImage;
-var obstaclesGroup, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6;
-
-var score;
-var newImage;
+//Game States
+var PLAY=1;
+var END=0;
+var gameState=1;
 
 function preload(){
-  trex_running = loadAnimation("trex1.png","trex3.png","trex4.png");
-  trex_collided = loadAnimation("trex_collided.png");
-  
-  groundImage = loadImage("ground2.png");
-  
-  cloudImage = loadImage("cloud.png");
- // trex_running = loadAnimation("peterpan.jpg")
+  pathImg = loadImage("Road.png");
+  boyImg = loadAnimation("Runner-1.png","Runner-2.png");
+  cashImg = loadImage("cash.png");
+  diamondsImg = loadImage("diamonds.png");
+  jwelleryImg = loadImage("jwell.png");
+  swordImg = loadImage("sword.png");
+  endImg =loadImage("gameOver.png");
 }
 
-function setup() {
-  createCanvas(600, 400);
+function setup(){
+  
+  createCanvas(windowWidth,windowHeight);
+// Moving background
+path=createSprite(width/2,200);
+path.addImage(pathImg);
+path.velocityY = 4;
 
-  trex = createSprite(50,360,20,50);
-  trex.addAnimation("running", trex_running);
-  // trex.addAnimation("collided",trex_collided)
-  trex.scale = 0.5;
+//creating boy running
+boy = createSprite(windowWidth,windowHeight,20,20);
+boy.addAnimation("sahil",boyImg);
+boy.scale=0.08;
+
+end = createSprite(width/2,height/2,0,70);
+end.addImage(endImg);
+end.visible = false;
   
-  ground = createSprite(200,380,400,20);
-  ground.addImage("ground",groundImage);
-  ground.x = ground.width /2;
-  ground.velocityX = -4;
-  
-  invisibleGround = createSprite(200,390,400,10);
-  invisibleGround.visible = false;
-  
-  
+cashG=new Group();
+diamondsG=new Group();
+jwelleryG=new Group();
+swordGroup=new Group();
+
 }
 
 function draw() {
-  background(180);
+
+  if(gameState===PLAY){
+  background(0);
+  boy.x = World.mouseX;
   
-  score = score + Math.round(getFrameRate()/60);
+  edges= createEdgeSprites();
+  boy.collide(edges);
   
-  
-  if(keyDown("space") && trex.y>100) {
-    trex.velocityY = -10;
+  //code to reset the background
+  if(path.y > height ){
+    path.y = height/2;
   }
   
-  trex.velocityY = trex.velocityY + 0.8
-  
-  if (ground.x < 0){
-    ground.x = ground.width/2;
-  }
-  
-  trex.collide(invisibleGround);
-  
-  //spawn the clouds
-  spawnClouds();
+    createCash();
+    createDiamonds();
+    createJwellery();
+    createSword();
+     
+        if (boy.isTouching(cashG)) {
+          cashG.destroyEach();
+          treasureCollection=treasureCollection+50;
+        }
+        else if (boy.isTouching(diamondsG)) {
+          diamondsG.destroyEach();
+          treasureCollection=treasureCollection+100;
+        }
+        else if(boy.isTouching(jwelleryG)) {
+          jwelleryG.destroyEach();
+          treasureCollection= treasureCollection + 150;
+        }
+        
+        else if(boy.isTouching(swordGroup)) {
+
+        end.visible = true;
+
+          cashG.destroyEach();
+        diamondsG.destroyEach();
+        jwelleryG.destroyEach();
+        swordGroup.destroyEach();
+        
+        cashG.setVelocityYEach(0);
+        diamondsG.setVelocityYEach(0);
+        jwelleryG.setVelocityYEach(0);
+        swordGroup.setVelocityYEach(0);
+
+        
+            gameState==END;
+  }}
   
   drawSprites();
+  textSize(20);
+  fill(255);
+  text("Treasure: "+ treasureCollection,width/10,height/20);
+  }
+
+
+
+function createCash() {
+  if (World.frameCount % 200 == 0) {
+  var cash = createSprite(Math.round(random(50, width-50),40, 10, 10));
+  cash.addImage(cashImg);
+  cash.scale=0.12;
+  cash.velocityY = 3;
+  cash.lifetime = 150;
+  cashG.add(cash);
+  }
 }
 
-function spawnClouds() {
-  //write code here to spawn the clouds
-  if (frameCount % 60 === 0) {
-    cloud = createSprite(600,100,40,10);
-    cloud.addImage(cloudImage)
-    cloud.y = Math.round(random(280,320))
-    
-    cloud.velocityX = -3;
-    
-    //adjust the depth
-    
-    }
+function createDiamonds() {
+  if (World.frameCount % 320 == 0) {
+  var diamonds = createSprite(Math.round(random(50, width-50),40, 10, 10));
+  diamonds.addImage(diamondsImg);
+  diamonds.scale=0.03;
+  diamonds.velocityY = 3;
+  diamonds.lifetime = 150;
+  diamondsG.add(diamonds);
+}
 }
 
+function createJwellery() {
+  if (World.frameCount % 410 == 0) {
+  var jwellery = createSprite(Math.round(random(50, width-50),40, 10, 10));
+  jwellery.addImage(jwelleryImg);
+  jwellery.scale=0.13;
+  jwellery.velocityY = 3;
+  jwellery.lifetime = 150;
+  jwelleryG.add(jwellery);
+  }
+}
+
+function createSword(){
+  if (World.frameCount % 530 == 0) {
+  var sword = createSprite(Math.round(random(50, 350),40, 10, 10));
+  sword.addImage(swordImg);
+  sword.scale=0.1;
+  sword.velocityY = 3;
+  sword.lifetime = 150;
+  swordGroup.add(sword);
+  }}
